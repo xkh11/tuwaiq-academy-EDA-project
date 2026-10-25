@@ -13,6 +13,10 @@ where to stay. The raw data (5,094 listings, 19 columns) is cleaned in a Python 
 | Presentation | https://xkh11.github.io/tuwaiq-academy-EDA-project/ |
 | Dataset | [Inside Airbnb, Bologna, 19 Sep 2026](https://data.insideairbnb.com/italy/emilia-romagna/bologna/2026-09-19/visualisations/listings.csv) |
 
+| Live dashboard | Presentation |
+|:---:|:---:|
+| <img src="docs/assets/qr-demo.svg" alt="QR code for the live dashboard" width="160"> | <img src="docs/assets/qr-slides.svg" alt="QR code for the presentation" width="160"> |
+
 ## Key findings
 
 Demand is measured with reviews in the last 12 months, because the data has no booking numbers.

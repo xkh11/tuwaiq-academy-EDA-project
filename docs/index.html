@@ -94,7 +94,7 @@ h3 { font-size: 1.05rem; font-weight: 700; letter-spacing: -.01em; }
 .qr .code { width: 100%; max-width: 210px; aspect-ratio: 1; margin: 0 auto; display: grid; place-items: center; border-radius: 12px; background: #fff; }
 .qr .code img { width: 100%; height: 100%; display: block; }
 .qr .code .pending { font-size: .8rem; color: var(--muted); padding: 10px; border: 2px dashed var(--silver); border-radius: 12px; width: 100%; height: 100%; display: grid; place-items: center; }
-.qr h3 { margin-top: 10px; } .qr .url { font-size: .74rem; color: var(--muted); word-break: break-all; margin-top: 2px; }
+.qr h3 { margin-top: 10px; } .qr .url { font-size: .74rem; color: var(--muted); overflow-wrap: break-word; margin-top: 2px; } .qr .url .nb { white-space: nowrap; }
 .hint { margin-top: 1.2rem; font-size: .8rem; color: var(--muted); }
 kbd { font: 700 .72rem/1 var(--font); padding: 3px 7px; border-radius: 6px; background: var(--card); box-shadow: 0 1px 0 var(--line), 0 0 0 1px var(--line); }
 
@@ -241,7 +241,7 @@ kbd { font: 700 .72rem/1 var(--font); padding: 3px 7px; border-radius: 6px; back
       </div>
       <div class="qr">
         <div class="code"><img src="assets/qr-slides.svg" alt="QR code for these slides" onerror="this.outerHTML='&lt;div class=&quot;pending&quot;&gt;QR code added after going live&lt;/div&gt;'"></div>
-        <h3>Slides</h3><div class="url">xkh11.github.io/tuwaiq-academy-EDA-project</div>
+        <h3>Slides</h3><div class="url">xkh11.github.io/<wbr><span class="nb">tuwaiq-academy-EDA-project</span></div>
       </div>
     </div>
   </div>
