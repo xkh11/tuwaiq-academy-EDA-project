@@ -53,7 +53,7 @@ The notebook also drops 3 columns, fills missing review values, converts dates, 
 It has 8 views: **Story** (the findings one at a time), **Overview**, **Host**, **Guest** (with a map),
 **Compare** (two neighbourhoods side by side), **Explore** (open any listing), **Predict** (a Random Forest
 price model: €73 average error against €88 for guessing the median, R² 0.16) and **Data** (filtered table
-and CSV download). The sidebar filters by neighbourhood, room type, max price and stay type.
+and CSV download). Filters for neighbourhood, room type, max price and stay type sit on top of the page and in the sidebar, always in sync.
 
 ## Run it locally
 

@@ -1,4 +1,4 @@
-"""Loading the cleaned data and applying the sidebar filters."""
+"""Loading the cleaned data and applying the filters."""
 from pathlib import Path
 
 import numpy as np

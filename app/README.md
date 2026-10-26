@@ -24,7 +24,7 @@ py tests/smoke_test.py
 
 | File | What it does |
 |---|---|
-| `app.py` | Page layout, sidebar filters and the 8 views |
+| `app.py` | Page layout, filters (top bar and sidebar) and the 8 views |
 | `ui.py` | Colours, CSS and drawing helpers (cards, KPI tiles, insights, chart style) |
 | `data.py` | Loads the cleaned data and applies the filters |
 | `model.py` | The Random Forest price model and its helpers |
@@ -46,6 +46,7 @@ py tests/smoke_test.py
 - **Data:** the filtered table, a CSV download and summary statistics.
 
 The sidebar has the dataset description and the filters: neighbourhood (dropdown), room type (multiselect),
-max price per night (slider), stay type (pills).
+max price per night (slider), stay type (pills). The same filters also sit in a bar on top of the page; both
+always show the same values, so you can use either one.
 
 Data: [Inside Airbnb](https://insideairbnb.com/get-the-data/), Bologna snapshot of 19 September 2026.

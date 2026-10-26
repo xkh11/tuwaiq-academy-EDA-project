@@ -6,7 +6,7 @@ Run it from this folder with:
     py -m streamlit run app.py
 
 Files:
-    app.py    page layout, sidebar filters and the 8 views (this file)
+    app.py    page layout, filters (top bar and sidebar) and the 8 views (this file)
     ui.py     colours, CSS and drawing helpers (cards, KPI tiles, insights, chart style)
     data.py   loading the cleaned data and applying the filters
     model.py  the Random Forest price model and its helpers
@@ -67,6 +67,31 @@ def go_to(view):
     st.session_state["seg_nav"] = view
 
 
+# ------------------------------------------------------------------ Filters (on top of the page and in the sidebar)
+# The sidebar widgets (keys f_*) own the filter values. The bar on top has its own widgets (keys t_*):
+# they are copied from the sidebar before anything is drawn, and write back when you change them.
+FILTERS = ["nb", "rooms", "max_price", "stay"]
+for name in FILTERS:
+    st.session_state[f"t_{name}"] = st.session_state[f"f_{name}"]
+
+
+def from_top(name):
+    st.session_state[f"f_{name}"] = st.session_state[f"t_{name}"]
+
+
+def filter_widgets(prefix, spots):
+    """Draw the 4 filters into `spots`: prefix "f" for the sidebar, "t" for the bar on top."""
+    def keys(name):
+        if prefix == "f":
+            return {"key": f"f_{name}"}
+        return {"key": f"t_{name}", "on_change": from_top, "args": (name,)}
+
+    spots[0].selectbox("Neighbourhood", [ALL] + sorted(df["neighbourhood"].unique()), **keys("nb"))
+    spots[1].multiselect("Room type", ROOM_ORDER, placeholder="Choose room types", **keys("rooms"))
+    spots[2].slider("Max price per night", 50, 1000, step=10, format="€%d", **keys("max_price"))
+    spots[3].pills("Stay type", STAY_ORDER, selection_mode="multi", **keys("stay"))
+
+
 # ------------------------------------------------------------------ Welcome dialog (first visit only)
 def mark_welcomed():
     st.session_state["welcomed"] = True
@@ -78,7 +103,7 @@ def welcome():
          "<b>host</b> or as a <b>guest</b>. Three tips to get started:</p>")
     st.markdown(
         "1. 📖 **Start with the Story** for the 5 key findings, one by one.\n"
-        "2. 🎛️ **Use the filters** on the left. Active filters appear under the title; tap one to remove it.\n"
+        "2. 🎛️ **Use the filters** at the top of the page (they are also in the sidebar).\n"
         "3. 👆 **Click things**: neighbourhood bars focus the dashboard, table rows open a listing, "
         "and the 🔮 **Predict** view prices any listing you describe."
     )
@@ -110,11 +135,9 @@ with st.sidebar:
         )
 
     st.sidebar.header("Filters")
-    st.selectbox("Neighbourhood", [ALL] + sorted(df["neighbourhood"].unique()), key="f_nb")
-    st.multiselect("Room type", ROOM_ORDER, key="f_rooms", placeholder="Choose room types")
-    st.slider("Max price per night", 50, 1000, step=10, format="€%d", key="f_max_price")
-    st.pills("Stay type", STAY_ORDER, selection_mode="multi", key="f_stay")
-    st.button("Reset all filters", on_click=reset_filters, icon=":material/restart_alt:", type="tertiary")
+    filter_widgets("f", [st] * 4)
+    st.button("Reset all filters", key="reset_side", on_click=reset_filters, icon=":material/restart_alt:",
+              type="tertiary")
 
     with st.expander("About this project"):
         st.markdown(
@@ -158,7 +181,7 @@ AREA_HINT = "Click a bar to focus the whole dashboard on that area" if selected 
             f"{selected} highlighted · click another bar to switch"
 
 
-# ------------------------------------------------------------------ Header, filter tokens and navigation
+# ------------------------------------------------------------------ Header, filter bar and navigation
 html(
     f"<div class='eyebrow'>Bologna · Inside Airbnb · 19 September 2026 · by {AUTHOR}</div>"
     "<h1 class='headline'>Two sides of Bologna's <span class='grad'>Airbnb market.</span></h1>"
@@ -166,25 +189,15 @@ html(
     "compare neighbourhoods, open any listing, and let a machine-learning model price one for you.</p>"
 )
 
-tokens = []
-if selected != ALL:
-    tokens.append((f"📍 {selected}", "f_nb", ALL))
-if len(st.session_state["f_rooms"]) < len(ROOM_ORDER):
-    tokens.append(("🛏️ " + (", ".join(st.session_state["f_rooms"]) or "No room types"), "f_rooms", ROOM_ORDER))
-if max_price < 1000:
-    tokens.append((f"💶 Up to €{max_price:,}", "f_max_price", 1000))
-if len(st.session_state["f_stay"] or []) < len(STAY_ORDER):
-    tokens.append(("📅 " + (", ".join(st.session_state["f_stay"] or []) or "No stay types"), "f_stay", STAY_ORDER))
+with st.container(key="card_filters"):
+    top_row = st.columns([1, 1.6], gap="large")
+    bottom_row = st.columns([1, 1.6], gap="large", vertical_alignment="bottom")
+    filter_widgets("t", [top_row[0], top_row[1], bottom_row[0], bottom_row[1]])
 
-html(f"<div class='count'>Showing <b>{len(f):,}</b> of {len(df):,} listings"
-     + (" · tap a filter to remove it" if tokens else "") + "</div>")
-if tokens:
-    with st.container(horizontal=True, key="tokens", gap="small"):
-        for i, (label, key, default) in enumerate(tokens):
-            st.button(f"{label}  ✕", key=f"token_{i}", on_click=set_filter,
-                      args=(key, default, f"Removed filter: {label[2:]}"))
-        if len(tokens) > 1:
-            st.button("Clear all", key="token_clear", on_click=reset_filters, type="tertiary")
+html(f"<div class='count'>Showing <b>{len(f):,}</b> of {len(df):,} listings</div>")
+if is_filtered:
+    st.button("Reset all filters", key="reset_top", on_click=reset_filters, icon=":material/restart_alt:",
+              type="tertiary")
 
 VIEWS = {"Story": ":material/auto_stories:", "Overview": ":material/space_dashboard:",
          "Host": ":material/home_work:", "Guest": ":material/luggage:", "Compare": ":material/compare_arrows:",
@@ -566,7 +579,7 @@ def swap_areas():
 
 
 def compare_view():
-    section("Compare two neighbourhoods", "Side by side, with the sidebar filters (except neighbourhood) applied.")
+    section("Compare two neighbourhoods", "Side by side, with the filters (except neighbourhood) applied.")
     col_a, col_swap, col_b = st.columns([5, 1, 5], vertical_alignment="bottom")
     col_a.selectbox("Area A", AREAS, key="c_a")
     col_swap.button("⇄", on_click=swap_areas, help="Swap the two areas", width="stretch")

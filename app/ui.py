@@ -85,10 +85,8 @@ html, body, .stApp, [data-testid="stSidebar"], [data-testid="stSlider"], [data-t
 [class*="st-key-seg_"] button[aria-checked="true"] {background: #FFFFFF !important; font-weight: 600;
                               box-shadow: 0 1px 3px rgba(0,0,0,.14), 0 1px 1px rgba(0,0,0,.04) !important;}
 
-/* Filter tokens under the header */
-.st-key-tokens button {background: #FFFFFF !important; border: 1px solid #E5E5EA !important; min-height: 32px;
-                       padding: 2px 12px !important; font-size: .85rem;}
-.st-key-tokens button:hover {border-color: #FF5A5F !important; color: #E0484D !important;}
+/* Filter bar under the header */
+.st-key-card_filters {padding: 14px 22px 4px; margin-top: .4rem;}
 
 /* Sidebar brand */
 .brand {display: flex; align-items: center; gap: 12px; margin-bottom: .6rem;}
