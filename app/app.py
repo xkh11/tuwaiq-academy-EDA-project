@@ -103,7 +103,7 @@ def welcome():
          "<b>host</b> or as a <b>guest</b>. Three tips to get started:</p>")
     st.markdown(
         "1. 📖 **Start with the Story** for the 5 key findings, one by one.\n"
-        "2. 🎛️ **Use the filters** at the top of the page (they are also in the sidebar).\n"
+        "2. 🎛️ **Use the filters** under the view tabs (they are also in the sidebar).\n"
         "3. 👆 **Click things**: neighbourhood bars focus the dashboard, table rows open a listing, "
         "and the 🔮 **Predict** view prices any listing you describe."
     )
@@ -181,7 +181,7 @@ AREA_HINT = "Click a bar to focus the whole dashboard on that area" if selected 
             f"{selected} highlighted · click another bar to switch"
 
 
-# ------------------------------------------------------------------ Header, filter bar and navigation
+# ------------------------------------------------------------------ Header, navigation and filter bar
 html(
     f"<div class='eyebrow'>Bologna · Inside Airbnb · 19 September 2026 · by {AUTHOR}</div>"
     "<h1 class='headline'>Two sides of Bologna's <span class='grad'>Airbnb market.</span></h1>"
@@ -189,22 +189,24 @@ html(
     "compare neighbourhoods, open any listing, and let a machine-learning model price one for you.</p>"
 )
 
-with st.container(key="card_filters"):
-    top_row = st.columns([1, 1.6], gap="large")
-    bottom_row = st.columns([1, 1.6], gap="large", vertical_alignment="bottom")
-    filter_widgets("t", [top_row[0], top_row[1], bottom_row[0], bottom_row[1]])
-
-html(f"<div class='count'>Showing <b>{len(f):,}</b> of {len(df):,} listings</div>")
-if is_filtered:
-    st.button("Reset all filters", key="reset_top", on_click=reset_filters, icon=":material/restart_alt:",
-              type="tertiary")
-
 VIEWS = {"Story": ":material/auto_stories:", "Overview": ":material/space_dashboard:",
          "Host": ":material/home_work:", "Guest": ":material/luggage:", "Compare": ":material/compare_arrows:",
          "Explore": ":material/travel_explore:", "Predict": ":material/auto_awesome:", "Data": ":material/table_rows:"}
 st.session_state.setdefault("seg_nav", "Story")
 view = st.segmented_control("View", list(VIEWS), format_func=lambda v: f"{VIEWS[v]} {v}",
                             required=True, key="seg_nav", label_visibility="collapsed")
+
+# Story and Predict always use all listings, so the filter bar only shows on the other views
+if view not in ("Story", "Predict"):
+    with st.container(key="card_filters"):
+        top_row = st.columns([1, 1.6], gap="large")
+        bottom_row = st.columns([1, 1.6], gap="large", vertical_alignment="bottom")
+        filter_widgets("t", [top_row[0], top_row[1], bottom_row[0], bottom_row[1]])
+
+    html(f"<div class='count'>Showing <b>{len(f):,}</b> of {len(df):,} listings</div>")
+    if is_filtered:
+        st.button("Reset all filters", key="reset_top", on_click=reset_filters, icon=":material/restart_alt:",
+                  type="tertiary")
 
 # Story and Predict always use all listings; the other views need at least one listing after filtering
 if (view in ("Overview", "Host", "Guest", "Explore", "Data") and f.empty) or (view == "Compare" and f_all_areas.empty):

@@ -85,8 +85,9 @@ html, body, .stApp, [data-testid="stSidebar"], [data-testid="stSlider"], [data-t
 [class*="st-key-seg_"] button[aria-checked="true"] {background: #FFFFFF !important; font-weight: 600;
                               box-shadow: 0 1px 3px rgba(0,0,0,.14), 0 1px 1px rgba(0,0,0,.04) !important;}
 
-/* Filter bar under the header */
-.st-key-card_filters {padding: 14px 22px 4px; margin-top: .4rem;}
+/* View tabs under the header, then the filter bar */
+.st-key-seg_nav {margin-top: 1rem;}
+.st-key-card_filters {padding: 14px 22px 4px; margin-top: .2rem;}
 
 /* Sidebar brand */
 .brand {display: flex; align-items: center; gap: 12px; margin-bottom: .6rem;}

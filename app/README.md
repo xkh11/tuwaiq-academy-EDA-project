@@ -46,7 +46,7 @@ py tests/smoke_test.py
 - **Data:** the filtered table, a CSV download and summary statistics.
 
 The sidebar has the dataset description and the filters: neighbourhood (dropdown), room type (multiselect),
-max price per night (slider), stay type (pills). The same filters also sit in a bar on top of the page; both
-always show the same values, so you can use either one.
+max price per night (slider), stay type (pills). The same filters also sit in a bar under the view tabs (on every
+view except Story and Predict, which always use all listings); both always show the same values.
 
 Data: [Inside Airbnb](https://insideairbnb.com/get-the-data/), Bologna snapshot of 19 September 2026.
