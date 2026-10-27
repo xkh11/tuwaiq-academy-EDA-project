@@ -1,61 +1,33 @@
-# Two sides of Bologna's Airbnb market
+# Bologna Airbnb: Host vs Guest
 
-**Tuwaiq Academy · Unit 3 Final Project · Exploratory Data Analysis** by **Khalid Alotaibi**
+Unit 3 final project at Tuwaiq Academy by Khalid Alotaibi.
 
-This project explores every Airbnb listing in Bologna, Italy, on 19 September 2026 from two points of view.
-**Hosts** want to know how to price and where they compete. **Guests** want to know what a night costs and
-where to stay. The raw data (5,094 listings, 19 columns) is cleaned in a Python notebook, explored with
-19 charts, and turned into an interactive Streamlit dashboard with a price model.
+I analysed all Airbnb listings in Bologna, Italy (Inside Airbnb, 19 September 2026) from two sides:
+what a host should know before listing a place, and what a guest should know before booking one.
 
-| | Link |
-|---|---|
-| Live dashboard | https://bologna-airbnb.streamlit.app |
-| Presentation | https://xkh11.github.io/tuwaiq-academy-EDA-project/ |
-| Dataset | [Inside Airbnb, Bologna, 19 Sep 2026](https://data.insideairbnb.com/italy/emilia-romagna/bologna/2026-09-19/visualisations/listings.csv) |
+- Dashboard: https://bologna-airbnb.streamlit.app
+- Presentation: https://xkh11.github.io/tuwaiq-academy-EDA-project/
+- Dataset: [listings.csv from Inside Airbnb](https://data.insideairbnb.com/italy/emilia-romagna/bologna/2026-09-19/visualisations/listings.csv)
 
-| Live dashboard | Presentation |
-|:---:|:---:|
-| <img src="docs/assets/qr-demo.svg" alt="QR code for the live dashboard" width="160"> | <img src="docs/assets/qr-slides.svg" alt="QR code for the presentation" width="160"> |
+## What I did
 
-## Key findings
+1. Loaded the data (5,094 rows, 19 columns) and checked its structure and missing values.
+2. Cleaned it: removed 2 duplicates, 518 listings with no price and 44 prices above €1,000, which left 4,530 listings.
+3. Explored it with 19 charts, from the host side and the guest side.
+4. Built a Streamlit dashboard with filters, a map and a simple price model (Random Forest).
+
+## Main findings
+
+- A typical night costs €176 (median).
+- 48 professional hosts run 28% of all listings.
+- Mid-range listings (€100 to €199) get the most reviews, more than cheap ones.
+- Price and demand are barely related (correlation -0.09).
+- A private room is about €55 cheaper than an entire home.
+- Savena is about €70 cheaper than the centre, but 69% of listings are in the two central areas.
 
 Demand is measured with reviews in the last 12 months, because the data has no booking numbers.
 
-**For hosts**
-1. **48 professional hosts run 28% of all listings.** They charge €31 more a night than single hosts, but single hosts get 35% more reviews.
-2. **The mid-range gets the most demand.** Listings at €100 to €199 get a median of 10 reviews a year, budget listings only 3.
-3. **Price hardly predicts demand** (correlation -0.09).
-
-**For guests**
-
-4. **A typical night costs €176** (median; the mean is €206 because of a few very expensive listings).
-5. **A private room saves about €55 a night** (€134 against €189 for an entire home).
-6. **Staying outside the centre saves about €70.** Savena has a median of €125, Santo Stefano €195. Still, 69% of listings are in the two central areas.
-
-## Cleaning
-
-| Step | Rows left |
-|---|---|
-| Raw file | 5,094 |
-| Removed 2 duplicate listings | 5,092 |
-| Removed 518 listings with no price | 4,574 |
-| Removed 44 prices above €1,000 (max was €10,000) | **4,530** |
-
-The notebook also drops 3 columns, fills missing review values, converts dates, renames 2 columns and adds
-4 new ones (`host_type`, `has_license`, `price_category`, `stay_type`).
-
-## The dashboard
-
-| Story | Compare |
-|---|---|
-| ![Story view](docs/assets/story.jpg) | ![Compare view](docs/assets/compare.jpg) |
-
-It has 8 views: **Story** (the findings one at a time), **Overview**, **Host**, **Guest** (with a map),
-**Compare** (two neighbourhoods side by side), **Explore** (open any listing), **Predict** (a Random Forest
-price model: €73 average error against €88 for guessing the median, R² 0.16) and **Data** (filtered table
-and CSV download). Filters for neighbourhood, room type, max price and stay type sit in the sidebar and in a Filters menu on each view, always in sync. The design follows the app-screen rules of the [taste-skill](https://github.com/Leonxlnx/taste-skill) guide: Airbnb coral only on the data, plain-number KPIs, flat cards and one finding under every title.
-
-## Run it locally
+## Run it
 
 ```bash
 pip install -r app/requirements.txt
@@ -63,30 +35,17 @@ cd app
 streamlit run app.py
 ```
 
-Check every view without opening a browser:
+The notebook runs in Google Colab or Jupyter and loads the data from the Inside Airbnb link.
 
-```bash
-python app/tests/smoke_test.py
-```
+## Folders
 
-The notebook runs in Google Colab or Jupyter. It loads the data straight from the Inside Airbnb link.
-
-## Folder guide
-
-```
-├── notebook/bologna_airbnb_eda.ipynb   cleaning, EDA (19 charts), price model, insights
-├── app/                                Streamlit dashboard (app.py, ui.py, data.py, model.py)
-│   └── clean_listings.csv              the cleaned data the notebook produces
-├── data/listings.csv                   the raw Inside Airbnb file
-└── docs/                               the presentation (GitHub Pages) and speaker notes
-```
+- `notebook/` the analysis notebook
+- `app/` the Streamlit dashboard and the cleaned data
+- `data/` the raw data
+- `docs/` the presentation
 
 ## Tools
 
 Python, pandas, NumPy, Matplotlib, Seaborn, scikit-learn, Plotly, Streamlit.
 
----
-
-Photos in the presentation: Wikimedia Commons, CC BY-SA 4.0: "Portici di Bologna 2019" by Isabella.Mileti, "Bologna Portici di Via dei Mille" by FrancescoLama, "Bologna Torre degli Asinelli Vista Panoramica 05" by Zairon.
-
-Built by **Khalid Alotaibi**. Data from [Inside Airbnb](https://insideairbnb.com/). Independent student project, not affiliated with Airbnb.
+Photos in the presentation are from Wikimedia Commons (CC BY-SA 4.0) by Isabella.Mileti, FrancescoLama and Zairon.
