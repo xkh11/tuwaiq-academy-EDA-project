@@ -1,157 +1,176 @@
-"""Look and feel: colours, CSS, and small helpers that draw cards, KPI tiles, insights and charts."""
+"""Look and feel: colours, CSS, and small helpers that draw the title, KPI strip, cards, findings and charts."""
 import streamlit as st
 
 from data import HOST_ORDER, PRICE_ORDER, ROOM_ORDER
 
-# Colours: Airbnb coral + Apple-style neutrals
-CORAL = "#FF5A5F"
-CORAL_LIGHT = "#FFB3B5"
-INK = "#1D1D1F"
-GREY = "#86868B"
-SILVER = "#D2D2D7"
-GREEN = "#34C759"
-TEAL = "#30B0C7"
-FONT = "Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
+# Colours: Airbnb coral on the data, warm neutrals everywhere else
+CORAL = "#FF5A5F"        # the one data hue
+CORAL_PALE = "#FFC2C4"
+CORAL_DARK = "#A3202B"
+CORAL_TEXT = "#C8303D"   # coral that is readable as text on white
+INK = "#222222"
+GREY = "#6A6A6A"         # secondary text
+MID = "#B0B0B0"          # data that is not the answer
+SILVER = "#DDDDDD"
+LINE = "#EBEBEB"
+FONT = "'DM Sans', system-ui, -apple-system, 'Segoe UI', sans-serif"
 
-HOST_COLORS = dict(zip(HOST_ORDER, [CORAL, CORAL_LIGHT, INK]))
-PRICE_COLORS = dict(zip(PRICE_ORDER, [GREEN, CORAL, INK]))
-ROOM_COLORS = dict(zip(ROOM_ORDER, [CORAL, INK, GREY, SILVER]))
+# One subject keeps one colour on every screen
+HOST_COLORS = dict(zip(HOST_ORDER, [INK, MID, CORAL]))
+PRICE_COLORS = dict(zip(PRICE_ORDER, [CORAL_PALE, CORAL, CORAL_DARK]))
+ROOM_COLORS = dict(zip(ROOM_ORDER, [CORAL, INK, MID, SILVER]))
 
 PLOTLY_CONFIG = {"displaylogo": False, "displayModeBar": "hover",
-                 "modeBarButtonsToRemove": ["autoScale2d", "toImage"]}
+                 "modeBarButtonsToRemove": ["autoScale2d", "toImage", "lasso2d"]}
+
+# The product mark: one of Bologna's porticoes, drawn as an arch
+MARK = ("<svg viewBox='0 0 24 24' width='30' height='30' aria-hidden='true'>"
+        "<path d='M3 22V10.5a9 9 0 0 1 18 0V22h-4.5V10.5a4.5 4.5 0 0 0-9 0V22z' fill='#FF5A5F'/></svg>")
 
 CSS = """
 <style>
-.block-container {padding-top: 2.4rem; padding-bottom: 3rem; max-width: 1280px;}
-[data-testid="stHeader"] {background: rgba(245,245,247,.72); backdrop-filter: saturate(180%) blur(20px);}
+:root {--ground: #F7F7F7; --surface: #FFFFFF; --border: #EBEBEB; --rule: #F2F2F2; --control: #DDDDDD;
+       --text: #222222; --muted: #6A6A6A; --coral: #FF5A5F; --coral-text: #C8303D;}
+.block-container {padding-top: 2rem; padding-bottom: 3rem; max-width: 1240px;}
+[data-testid="stHeader"] {background: var(--ground);}
 [data-testid="stAppDeployButton"] {display: none;}
 .st-key-ltr_fix {position: absolute; width: 0; height: 0; overflow: hidden;}
-@keyframes rise {from {opacity: 0; transform: translateY(8px);} to {opacity: 1; transform: none;}}
 
 /* Always left-to-right, even if the browser is in Arabic or translates the page */
 html, body, .stApp, [data-testid="stSidebar"], [data-testid="stSlider"], [data-testid="stSlider"] * {
     direction: ltr !important;}
-[data-testid="stSlider"] [role="slider"] {background: #FFFFFF !important; box-shadow: 0 1px 4px rgba(0,0,0,.3) !important;}
+[data-testid="stSlider"] [role="slider"] {background: #FFFFFF !important; border: 1px solid var(--control) !important;
+                                          box-shadow: 0 1px 2px rgba(0,0,0,.12) !important;}
 
-/* Hero */
-.eyebrow {color: #FF5A5F; font-weight: 600; font-size: .92rem; margin-bottom: .4rem;}
-.headline {font-size: clamp(2.2rem, 4.4vw, 3.7rem); font-weight: 800; line-height: 1.04; letter-spacing: -0.04em;
-           color: #1D1D1F; margin: 0;}
-.grad {background: linear-gradient(90deg, #FF5A5F 0%, #FF7A59 45%, #E0457B 100%);
-       -webkit-background-clip: text; background-clip: text; color: transparent;}
-.subhead {font-size: 1.14rem; color: #6E6E73; max-width: 800px; margin: .85rem 0 0; line-height: 1.5;}
-.count {color: #6E6E73; font-size: .92rem; margin: 1.1rem 0 .35rem;}
-.count b {color: #1D1D1F;}
+/* Figures line up digit for digit */
+.kpi-value, .vs-val, .result .price, .facts b, .chapter .big, .findings b {font-variant-numeric: tabular-nums;}
 
-/* Headings */
-.section-title {font-size: 1.75rem; font-weight: 800; letter-spacing: -0.035em; color: #1D1D1F; margin: .6rem 0 .15rem;}
-.section-sub {color: #6E6E73; font-size: 1.02rem; margin-bottom: 1rem;}
-.small-title {font-size: 1.2rem; font-weight: 700; letter-spacing: -0.02em; color: #1D1D1F; margin: 1.4rem 0 .6rem;}
+/* Chosen room types and stay types are neutral chips in ink, not coral blocks: colour stays on the data */
+[data-testid="stMultiSelectTagsContainer"] > span > span {background: #F2F2F2 !important; color: var(--text) !important;}
+[data-testid="stMultiSelectTagsContainer"] > span > span * {color: var(--text) !important; fill: var(--muted) !important;}
+button[data-variant="pills"] {border-color: var(--control) !important; color: var(--text) !important;
+                              background: var(--surface) !important;}
+button[data-variant="pills"][data-selected="true"] {border-color: var(--text) !important; background: #F2F2F2 !important;
+                                                    font-weight: 600;}
 
-/* KPI tiles */
-.kpis {display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; margin: .2rem 0 1.1rem;}
-.kpi {background: #FFFFFF; border-radius: 20px; padding: 18px 20px; animation: rise .45s ease both;
-      box-shadow: 0 1px 2px rgba(0,0,0,.04), 0 6px 20px rgba(0,0,0,.04); transition: transform .2s ease, box-shadow .2s ease;}
-.kpi:hover {transform: translateY(-2px); box-shadow: 0 2px 4px rgba(0,0,0,.05), 0 14px 30px rgba(0,0,0,.08);}
-.kpi-label {color: #6E6E73; font-size: .86rem; font-weight: 500;}
-.kpi-value {font-size: 2rem; font-weight: 700; letter-spacing: -0.035em; color: #1D1D1F; line-height: 1.2;
-            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
-.pill {display: inline-block; margin-top: 8px; font-size: .76rem; font-weight: 600; padding: 3px 9px;
-       border-radius: 999px; background: #F2F2F7; color: #6E6E73;}
-.pill.up {background: #E9F8EE; color: #1E8E3E;}
-.pill.down {background: #FFECEC; color: #D70015;}
-.pill.coral {background: #FFE3E4; color: #D9363B;}
-.pill.ink {background: #1D1D1F; color: #FFFFFF;}
+/* Sidebar: the product's mark, name and scope */
+.brand {display: flex; align-items: center; gap: 10px; margin: -.4rem 0 .9rem;}
+.brand .name {font-weight: 700; font-size: 1.08rem; letter-spacing: -0.01em; color: var(--text); line-height: 1.2;}
+.brand .scope {font-size: .8rem; color: var(--muted);}
+.brand.phone-only {display: none;}
 
-/* White cards (containers with key "card_...") */
-[class*="st-key-card_"] {background: #FFFFFF; border-radius: 22px; padding: 20px 22px 10px;
-                         box-shadow: 0 1px 2px rgba(0,0,0,.04), 0 6px 20px rgba(0,0,0,.04); animation: rise .5s ease both;}
-.card-title {font-size: 1.06rem; font-weight: 700; letter-spacing: -0.015em; color: #1D1D1F;}
-.card-sub {font-size: .85rem; color: #86868B; margin-top: 1px;}
-
-/* Insight cards */
-.insights {display: grid; grid-template-columns: repeat(auto-fit, minmax(270px, 1fr)); gap: 14px; margin-bottom: .6rem;}
-.insight {background: #FFFFFF; border-radius: 18px; padding: 16px 18px; display: flex; gap: 12px; animation: rise .5s ease both;
-          box-shadow: 0 1px 2px rgba(0,0,0,.04), 0 6px 20px rgba(0,0,0,.04); font-size: .95rem; line-height: 1.45; color: #1D1D1F;}
-.insight .dot {flex: none; width: 10px; height: 10px; border-radius: 50%; margin-top: 7px; background: #FF5A5F;}
-.insight.guest .dot {background: #1D1D1F;}
-.insight.model .dot {background: #30B0C7;}
-
-/* Segmented controls (keys starting with "seg_") look like iOS */
-[class*="st-key-seg_"] [role="radiogroup"] {background: #E8E8ED; padding: 3px; border-radius: 20px; gap: 2px;}
+/* View tabs: a quiet track with a white pill on the open view */
+[class*="st-key-seg_"] [role="radiogroup"] {background: #EFEFEF; padding: 3px; border-radius: 999px; gap: 2px;}
 [class*="st-key-seg_"] button {border: none !important; background: transparent !important; box-shadow: none !important;
-                              border-radius: 999px !important; padding: 6px 14px !important; color: #1D1D1F !important;
-                              transition: background .2s ease, box-shadow .2s ease;}
+                              border-radius: 999px !important; padding: 6px 14px !important; color: var(--text) !important;
+                              transition: background .15s ease;}
+[class*="st-key-seg_"] button:hover {background: rgba(255,255,255,.6) !important;}
 [class*="st-key-seg_"] button[aria-checked="true"] {background: #FFFFFF !important; font-weight: 600;
-                              box-shadow: 0 1px 3px rgba(0,0,0,.14), 0 1px 1px rgba(0,0,0,.04) !important;}
+                              box-shadow: 0 1px 2px rgba(0,0,0,.1) !important;}
 
-/* View tabs under the header, then the filter bar */
-.st-key-seg_nav {margin-top: 1rem;}
-.st-key-card_filters {padding: 14px 22px 4px; margin-top: .2rem;}
+/* Page title and its finding */
+h1.page-title {font-size: 2rem !important; font-weight: 700 !important; letter-spacing: -0.02em; line-height: 1.2;
+               color: var(--text); margin: .9rem 0 .25rem !important; padding: 0 !important;}
+.page-sub {font-size: 1rem; color: var(--muted); line-height: 1.5; max-width: 820px; margin: 0 0 .2rem;}
+.page-sub b {color: var(--text); font-weight: 600;}
+.small-title {font-size: 1.1rem; font-weight: 700; letter-spacing: -0.01em; color: var(--text); margin: 1.6rem 0 .5rem;}
 
-/* Sidebar brand */
-.brand {display: flex; align-items: center; gap: 12px; margin-bottom: .6rem;}
-.brand .logo {width: 40px; height: 40px; border-radius: 12px; background: linear-gradient(135deg, #FF5A5F, #E0457B);
-              display: grid; place-items: center; color: #FFFFFF; font-size: 1.25rem;}
-.brand .name {font-weight: 700; font-size: 1.05rem; letter-spacing: -0.01em; color: #1D1D1F;}
-.brand .sub {font-size: .8rem; color: #86868B;}
+/* The scope row: how many listings are shown and which filters are on */
+.scope-line {color: var(--muted); font-size: .95rem;}
+.scope-line b {color: var(--text); font-weight: 600;}
 
-/* Story mode */
-.chapter {display: flex; flex-direction: column; gap: .6rem; padding: .4rem 0 1rem; animation: rise .45s ease both;}
-.chapter .tag {align-self: flex-start; font-size: .78rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase;
-               padding: 4px 10px; border-radius: 999px; background: #FFE3E4; color: #D9363B;}
-.chapter .tag.guest {background: #1D1D1F; color: #FFFFFF;}
-.chapter .tag.model {background: #E3F6FA; color: #1B7F92;}
-.chapter .big {font-size: clamp(3.2rem, 6vw, 5.2rem); font-weight: 800; letter-spacing: -0.05em; line-height: 1;}
-.chapter .title {font-size: 1.6rem; font-weight: 800; letter-spacing: -0.03em; color: #1D1D1F; line-height: 1.15;}
-.chapter .text {font-size: 1.05rem; color: #3A3A3C; line-height: 1.55;}
-.dots {display: flex; gap: 8px; align-items: center; margin: .2rem 0 .8rem;}
-.dots span {width: 8px; height: 8px; border-radius: 999px; background: #D2D2D7; transition: all .3s ease;}
-.dots span.on {width: 26px; background: #FF5A5F;}
+/* KPI strip: one white container split by thin lines */
+.kpis {display: grid; gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: 16px;
+       overflow: hidden; margin: .3rem 0 1rem;}
+.kpi {background: var(--surface); padding: 16px 20px 15px;}
+.kpi-label {color: var(--muted); font-size: .84rem;}
+.kpi-value {font-size: 1.65rem; font-weight: 600; letter-spacing: -0.02em; color: var(--text); line-height: 1.25;
+            margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
+.kpi-note {color: var(--muted); font-size: .8rem; margin-top: 2px;}
+.kpi.lead .kpi-value {color: var(--coral-text);}
+
+/* Cards (containers with key "card_...") */
+[class*="st-key-card_"] {background: var(--surface); border: 1px solid var(--border); border-radius: 16px;
+                         padding: 18px 20px 8px;}
+.card-title {font-size: 1rem; font-weight: 600; color: var(--text);}
+.card-sub {font-size: .84rem; color: var(--muted); margin-top: 1px;}
+
+/* Findings: one panel of ruled rows */
+.findings {background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 6px 20px;
+           margin: .2rem 0 .6rem;}
+.findings .f-title {font-size: 1rem; font-weight: 600; color: var(--text); padding: 12px 0 6px;}
+.findings ul {list-style: none; margin: 0; padding: 0;}
+.findings li {padding: 11px 0; border-top: 1px solid var(--rule); font-size: .97rem; line-height: 1.5; color: var(--text);
+              margin: 0;}
+.findings b {font-weight: 600;}
+
+/* Story: one finding at a time, read like a page */
+.chapter {display: flex; flex-direction: column; gap: .5rem; padding: .2rem 0 .8rem;}
+.chapter .side {font-size: .9rem; color: var(--muted);}
+.chapter .side b {color: var(--text); font-weight: 600;}
+.chapter .big {font-size: clamp(3rem, 5.4vw, 4.4rem); font-weight: 700; letter-spacing: -0.04em; line-height: 1;
+               color: var(--coral);}
+.chapter .title {font-size: 1.55rem; font-weight: 700; letter-spacing: -0.02em; color: var(--text); line-height: 1.2;}
+.chapter .text {font-size: 1.02rem; color: var(--text); line-height: 1.55;}
+.progress-text {text-align: center; color: var(--muted); font-size: .9rem;}
 
 /* Compare areas */
-.vs {background: #FFFFFF; border-radius: 22px; padding: 8px 22px; margin-bottom: 1rem; animation: rise .45s ease both;
-     box-shadow: 0 1px 2px rgba(0,0,0,.04), 0 6px 20px rgba(0,0,0,.04);}
-.vs-row {display: grid; grid-template-columns: 1.3fr 1fr 1fr; gap: 12px; align-items: center; padding: 12px 0;
-         border-bottom: 1px solid #F2F2F7;}
-.vs-row:last-child {border-bottom: none;}
-.vs-head {font-weight: 700; font-size: 1.02rem;}
-.vs-head.a {color: #E0484D;}
-.vs-label {color: #6E6E73; font-size: .9rem;}
-.vs-val {font-size: 1.35rem; font-weight: 700; letter-spacing: -0.02em; color: #1D1D1F;}
-.vs-val.win::after {content: " 🏆"; font-size: 1rem;}
+.vs {background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 4px 20px;
+     margin-bottom: .4rem;}
+.vs-row {display: grid; grid-template-columns: 1.3fr 1fr 1fr; gap: 12px; align-items: center; padding: 11px 0;
+         border-top: 1px solid var(--rule);}
+.vs-row:first-child {border-top: none;}
+.vs-head {font-weight: 600; font-size: 1rem; text-align: right;}
+.vs-head.a {color: var(--coral-text);}
+.vs-label {color: var(--muted); font-size: .9rem;}
+.vs-val {font-size: 1.2rem; font-weight: 500; color: var(--text); text-align: right;}
+.vs-val.win {color: var(--coral-text); font-weight: 700;}
 
 /* Result and detail cards */
-.result {background: #FFFFFF; border-radius: 24px; padding: 24px 26px; animation: rise .45s ease both;
-         box-shadow: 0 1px 2px rgba(0,0,0,.04), 0 10px 30px rgba(0,0,0,.06);}
-.result .label {color: #6E6E73; font-weight: 500;}
-.result .price {font-size: 4rem; font-weight: 800; letter-spacing: -0.05em; line-height: 1.05;}
-.result .per {font-size: 1.1rem; color: #86868B; font-weight: 600; letter-spacing: 0;}
-.result .meta {color: #6E6E73; font-size: .9rem; margin-top: .3rem;}
-.result .name {font-size: 1.25rem; font-weight: 700; letter-spacing: -0.02em; color: #1D1D1F; line-height: 1.25;}
-.facts {display: grid; grid-template-columns: repeat(auto-fit, minmax(118px, 1fr)); gap: 10px; margin-top: 1rem;}
-.facts div {background: #F5F5F7; border-radius: 14px; padding: 10px 12px; font-size: .8rem; color: #6E6E73;}
-.facts b {display: block; font-size: 1.05rem; color: #1D1D1F;}
+.result {background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 22px 24px;}
+.result .label {color: var(--muted); font-size: .9rem;}
+.result .price {font-size: 2.5rem; font-weight: 700; letter-spacing: -0.03em; line-height: 1.1; color: var(--text);}
+.result .per {font-size: 1rem; color: var(--muted); font-weight: 500; letter-spacing: 0;}
+.result .meta {color: var(--muted); font-size: .9rem; margin-top: .25rem;}
+.result .name {font-size: 1.2rem; font-weight: 600; color: var(--text); line-height: 1.3;}
+.pill {display: inline-block; margin-top: 10px; font-size: .8rem; font-weight: 500; padding: 3px 10px; border-radius: 999px;
+       background: #F2F2F2; color: var(--muted);}
+.pill.up {background: #DCFAE5; color: #04250E;}
+.pill.down {background: #FFEDEA; color: #831C1E;}
+.facts {display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px; background: var(--border); border: 1px solid var(--border);
+        border-radius: 12px; overflow: hidden; margin-top: 1rem;}
+.facts div {background: var(--surface); padding: 10px 12px; font-size: .8rem; color: var(--muted);}
+.facts b {display: block; font-size: 1.02rem; font-weight: 600; color: var(--text);}
 .range {position: relative; margin: 2.6rem 4px 1.9rem;}
-.range-track {position: relative; height: 8px; border-radius: 999px; background: #F2F2F7;}
-.range-band {position: absolute; top: 0; bottom: 0; border-radius: 999px; background: #FFD6D7;}
-.range-mark {position: absolute; top: 50%; width: 16px; height: 16px; border-radius: 50%; transform: translate(-50%, -50%);
-             border: 3px solid #FFFFFF; box-shadow: 0 1px 4px rgba(0,0,0,.3);}
-.range-mark.est {background: #FF5A5F;}
-.range-mark.med {background: #1D1D1F;}
-.range-mark span {position: absolute; left: 50%; transform: translateX(-50%); white-space: nowrap; font-size: .78rem; font-weight: 600;}
-.range-mark.est span {bottom: 18px; color: #E0484D;}
-.range-mark.med span {top: 18px; color: #1D1D1F;}
-.range-legend {color: #86868B; font-size: .82rem;}
-.verdict {border-radius: 14px; padding: 12px 16px; font-weight: 600; margin-top: .4rem; animation: rise .3s ease both;}
-.verdict.good {background: #E9F8EE; color: #1E8E3E;}
-.verdict.fair {background: #F2F2F7; color: #1D1D1F;}
-.verdict.high {background: #FFECEC; color: #D70015;}
+.range-track {position: relative; height: 8px; border-radius: 999px; background: #F2F2F2;}
+.range-band {position: absolute; top: 0; bottom: 0; border-radius: 999px; background: var(--coral-pale, #FFD6D7);}
+.range-mark {position: absolute; top: 50%; width: 14px; height: 14px; border-radius: 50%; transform: translate(-50%, -50%);
+             border: 2px solid #FFFFFF;}
+.range-mark.est {background: var(--coral);}
+.range-mark.med {background: var(--text);}
+.range-mark span {position: absolute; left: 50%; transform: translateX(-50%); white-space: nowrap; font-size: .8rem; font-weight: 600;}
+.range-mark.est span {bottom: 17px; color: var(--coral-text);}
+.range-mark.med span {top: 17px; color: var(--text);}
+.range-legend {color: var(--muted); font-size: .84rem;}
+.verdict {border-radius: 12px; padding: 11px 15px; font-weight: 500; margin-top: .5rem;}
+.verdict.good {background: #DCFAE5; color: #04250E;}
+.verdict.fair {background: #F2F2F2; color: var(--text);}
+.verdict.high {background: #FFEDEA; color: #831C1E;}
 
 @media (max-width: 640px) {
+  .block-container {padding-top: 1.2rem;}
+  .brand.phone-only {display: flex; margin: 1.6rem 0 .6rem;}
+  h1.page-title {font-size: 1.5rem !important;}
+  /* Tabs scroll sideways in one row instead of wrapping into a block */
+  [class*="st-key-seg_"] [role="radiogroup"] {flex-wrap: nowrap !important; overflow-x: auto; scrollbar-width: none;}
+  [class*="st-key-seg_"] button {flex: none !important; white-space: nowrap;}
+  .kpis {grid-template-columns: repeat(2, 1fr) !important;}
+  .kpi:last-child:nth-child(odd) {grid-column: span 2;}
+  .kpi-value {font-size: 1.35rem;}
   .facts {grid-template-columns: repeat(2, 1fr);}
-  .vs-val {font-size: 1.1rem;}
-  .result .price {font-size: 3rem;}
+  .vs {padding: 4px 14px;}
+  .vs-val {font-size: 1.02rem;}
+  .result .price {font-size: 2.1rem;}
 }
 </style>
 """
@@ -191,7 +210,7 @@ COLUMNS = {
     "number_of_reviews": "Total reviews",
     "reviews_last_12m": st.column_config.NumberColumn("Reviews (12 mo)"),
     "has_license": st.column_config.CheckboxColumn("License"),
-    "last_review": st.column_config.DateColumn("Last review", format="DD MMM YYYY"),
+    "last_review": st.column_config.DateColumn("Last review", format="YYYY-MM-DD"),
     "km_to_centre": st.column_config.NumberColumn("Km to centre", format="%.1f"),
     "availability_365": st.column_config.ProgressColumn("Available days", min_value=0, max_value=365, format="%d"),
     "link": st.column_config.LinkColumn("Airbnb page", display_text="Open ↗"),
@@ -212,25 +231,32 @@ def html(markup):
     st.markdown(markup, unsafe_allow_html=True)
 
 
+def brand(scope, phone_only=False):
+    """The product's mark and name, with what the data covers. On the page itself it only shows on phones."""
+    html(f"<div class='brand{' phone-only' if phone_only else ''}'>{MARK}<div><div class='name'>Bologna Airbnb</div>"
+         f"<div class='scope'>{scope}</div></div></div>")
+
+
 def style(fig, height=340, legend=False):
-    """Clean, Apple-like look for every chart."""
+    """One quiet look for every chart: faint horizontal grid, grey ticks, colour only on the data."""
     fig.update_layout(
         template="plotly_white",
         height=height,
-        margin=dict(l=4, r=12, t=12, b=4),
-        font=dict(family=FONT, size=13, color="#3A3A3C"),
+        margin=dict(l=4, r=12, t=36 if legend else 10, b=4),
+        font=dict(family=FONT, size=12, color=GREY),
         paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
         showlegend=legend,
-        legend=dict(orientation="h", yanchor="top", y=-0.16, x=0, title_text="", font=dict(size=12)),
-        hoverlabel=dict(bgcolor="#FFFFFF", bordercolor="#E5E5EA", font=dict(family=FONT, size=13, color=INK)),
+        legend=dict(orientation="h", yanchor="bottom", y=1.0, x=0, title_text="", font=dict(size=12, color=INK)),
+        hoverlabel=dict(bgcolor="#FFFFFF", bordercolor=SILVER, font=dict(family=FONT, size=13, color=INK)),
         bargap=0.32,
         title_text="",
     )
-    for update in (fig.update_xaxes, fig.update_yaxes):
-        update(gridcolor="#F0F0F3", zeroline=False, showline=False, ticks="", tickfont=dict(color=GREY),
-               title_font=dict(color=GREY, size=12))
-    fig.update_traces(selector=dict(type="bar"), marker_cornerradius=8, marker_line_width=0)
+    fig.update_xaxes(showgrid=False, zeroline=False, showline=False, ticks="", tickfont=dict(color=GREY, size=12),
+                     title_font=dict(color=GREY, size=12))
+    fig.update_yaxes(gridcolor=LINE, zeroline=False, showline=False, ticks="", tickfont=dict(color=GREY, size=12),
+                     title_font=dict(color=GREY, size=12))
+    fig.update_traces(selector=dict(type="bar"), marker_cornerradius=4, marker_line_width=0)
     return fig
 
 
@@ -245,15 +271,16 @@ def chart(fig, **kwargs):
 
 
 def card(key, title, subtitle=None):
-    """A white rounded card with a title; use it with `with card(...):`."""
+    """A white card with a title; use it with `with card(...):`."""
     box = st.container(key=f"card_{key}")
     box.markdown(f"<div class='card-title'>{title}</div>"
                  + (f"<div class='card-sub'>{subtitle}</div>" if subtitle else ""), unsafe_allow_html=True)
     return box
 
 
-def section(title, subtitle):
-    html(f"<div class='section-title'>{title}</div><div class='section-sub'>{subtitle}</div>")
+def section(title, finding):
+    """The view's one title, and under it the finding the data shows."""
+    html(f"<h1 class='page-title'>{title}</h1><p class='page-sub'>{finding}</p>")
 
 
 def small_title(text):
@@ -261,18 +288,19 @@ def small_title(text):
 
 
 def kpis(items):
-    """Row of KPI tiles. Each item: (label, value, note or None, tone: up / down / neutral / coral / ink)."""
-    tiles = "".join(
-        f"<div class='kpi'><div class='kpi-label'>{label}</div><div class='kpi-value'>{value}</div>"
-        + (f"<div class='pill {tone}'>{note}</div>" if note else "") + "</div>"
+    """One strip of headline figures. Each item: (label, value, note or None, tone); tone "lead" marks the answer."""
+    cells = "".join(
+        f"<div class='kpi{' lead' if tone == 'lead' else ''}'><div class='kpi-label'>{label}</div>"
+        f"<div class='kpi-value'>{value}</div>" + (f"<div class='kpi-note'>{note}</div>" if note else "") + "</div>"
         for label, value, note, tone in items
     )
-    html(f"<div class='kpis'>{tiles}</div>")
+    html(f"<div class='kpis' style='grid-template-columns: repeat({len(items)}, 1fr)'>{cells}</div>")
 
 
-def insights(lines, kind=""):
-    cards = "".join(f"<div class='insight {kind}'><div class='dot'></div><div>{line}</div></div>" for line in lines)
-    html(f"<div class='insights'>{cards}</div>")
+def insights(lines, title="What this shows"):
+    """The findings of a view, as one panel of ruled rows."""
+    rows = "".join(f"<li>{line}</li>" for line in lines)
+    html(f"<div class='findings'><div class='f-title'>{title}</div><ul>{rows}</ul></div>")
 
 
 def verdict(price, estimate, mae):

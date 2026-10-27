@@ -1,22 +1,23 @@
 [theme]
 base = "light"
 primaryColor = "#FF5A5F"
-backgroundColor = "#F5F5F7"
+backgroundColor = "#F7F7F7"
 secondaryBackgroundColor = "#FFFFFF"
-textColor = "#1D1D1F"
-font = "Inter:https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
-baseRadius = "12px"
+textColor = "#222222"
+font = "DM Sans:https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap"
+baseRadius = "10px"
 buttonRadius = "full"
-borderColor = "#E5E5EA"
-showWidgetBorder = false
-showSidebarBorder = false
-dataframeHeaderBackgroundColor = "#F5F5F7"
-linkColor = "#E0484D"
+borderColor = "#DDDDDD"
+showWidgetBorder = true
+showSidebarBorder = true
+dataframeHeaderBackgroundColor = "#FFFFFF"
+linkColor = "#C8303D"
 linkUnderline = false
 
 [theme.sidebar]
 backgroundColor = "#FFFFFF"
-secondaryBackgroundColor = "#F2F2F7"
+secondaryBackgroundColor = "#FFFFFF"
+borderColor = "#DDDDDD"
 
 [browser]
 gatherUsageStats = false

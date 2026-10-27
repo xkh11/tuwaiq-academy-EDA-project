@@ -24,12 +24,20 @@ py tests/smoke_test.py
 
 | File | What it does |
 |---|---|
-| `app.py` | Page layout, filters (top bar and sidebar) and the 8 views |
-| `ui.py` | Colours, CSS and drawing helpers (cards, KPI tiles, insights, chart style) |
+| `app.py` | Page layout, filters (sidebar and Filters menu) and the 8 views |
+| `ui.py` | Colours, CSS and drawing helpers (title, KPI strip, cards, findings, chart style) |
 | `data.py` | Loads the cleaned data and applies the filters |
 | `model.py` | The Random Forest price model and its helpers |
 | `tests/smoke_test.py` | Opens every view headless and checks nothing breaks |
-| `.streamlit/config.toml` | Theme: colours, Inter font, rounded corners |
+| `.streamlit/config.toml` | Theme: Airbnb coral on the data, DM Sans font, soft corners |
+
+## Design
+
+Built to the app-screen rules of the [taste-skill](https://github.com/Leonxlnx/taste-skill) design guide: colour on
+the data (Airbnb coral on the answer, greys for the rest), plain-number KPIs in one divided strip, flat cards with a
+1px border, one title per view with its finding underneath, no emoji or gradients, and a phone layout of its own.
+The mark is one of Bologna's porticoes, drawn as an arch. The signature chart (Guest view) puts every neighbourhood
+on one price line: the middle half of its prices as a track and its median as a dot.
 
 ## The 8 views
 
@@ -37,8 +45,9 @@ py tests/smoke_test.py
 - **Overview:** KPIs compared with the whole city, price and area charts, a data preview and summary statistics.
 - **Host:** host types, price by host type, competition per neighbourhood (click a bar to focus the dashboard),
   demand by price, and a price-vs-demand chart where you can box-select listings to analyse them.
-- **Guest:** price distribution, cheapest areas, price by room type, a map (dots or heat), best-value picks.
-- **Compare:** two neighbourhoods side by side with winner badges and comparison charts.
+- **Guest:** price distribution, what a night costs in each area (click a dot to focus the dashboard), price by
+  room type, a map (dots or heat), best-value listings.
+- **Compare:** two neighbourhoods side by side, the better value for a guest marked in coral, with comparison charts.
 - **Explore:** search and sort every listing, then click one to see its details, the model's estimate and a fair-price verdict.
 - **Predict:** describe a listing to get an estimated price, how distance and room type change it, and a rough
   yearly income estimate for hosts (Inside Airbnb's occupancy model). The model's accuracy is shown openly:
@@ -46,7 +55,8 @@ py tests/smoke_test.py
 - **Data:** the filtered table, a CSV download and summary statistics.
 
 The sidebar has the dataset description and the filters: neighbourhood (dropdown), room type (multiselect),
-max price per night (slider), stay type (pills). The same filters also sit in a bar under the view tabs (on every
-view except Story and Predict, which always use all listings); both always show the same values.
+max price per night (slider), stay type (pills). The same filters also open from the **Filters** button beside the
+listing count (on every view except Story and Predict, which always use all listings); both always show the same
+values, and the active ones are listed next to the count.
 
 Data: [Inside Airbnb](https://insideairbnb.com/get-the-data/), Bologna snapshot of 19 September 2026.

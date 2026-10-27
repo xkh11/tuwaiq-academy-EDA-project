@@ -53,7 +53,7 @@ The notebook also drops 3 columns, fills missing review values, converts dates, 
 It has 8 views: **Story** (the findings one at a time), **Overview**, **Host**, **Guest** (with a map),
 **Compare** (two neighbourhoods side by side), **Explore** (open any listing), **Predict** (a Random Forest
 price model: €73 average error against €88 for guessing the median, R² 0.16) and **Data** (filtered table
-and CSV download). Filters for neighbourhood, room type, max price and stay type sit under the view tabs and in the sidebar, always in sync.
+and CSV download). Filters for neighbourhood, room type, max price and stay type sit in the sidebar and in a Filters menu on each view, always in sync. The design follows the app-screen rules of the [taste-skill](https://github.com/Leonxlnx/taste-skill) guide: Airbnb coral only on the data, plain-number KPIs, flat cards and one finding under every title.
 
 ## Run it locally
 

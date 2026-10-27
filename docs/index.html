@@ -345,7 +345,7 @@ kbd { font: 700 .72rem/1 var(--font); padding: 3px 7px; border-radius: 6px; back
         <h3 class="big">The centre costs <span class="grad">€70 more</span> than Savena</h3>
         <div class="grid-2 wl">
           <div class="card"><p class="label">Every listing on the map, coloured by price category</p><div class="map"><canvas id="c-map"></canvas></div>
-            <div class="legend"><span><i style="background:var(--green)"></i>Budget (under €100)</span><span><i style="background:var(--coral)"></i>Mid-range (€100 to €199)</span><span><i style="background:var(--ink)"></i>Premium (€200+)</span></div></div>
+            <div class="legend"><span><i style="background:#FFC2C4"></i>Budget (under €100)</span><span><i style="background:var(--coral)"></i>Mid-range (€100 to €199)</span><span><i style="background:#A3202B"></i>Premium (€200+)</span></div></div>
           <div class="stack">
             <div class="card"><p class="label">Median price per neighbourhood</p><div class="hbars" id="c-areas"></div></div>
             <div class="callout"><span class="dot"></span><span><b>69%</b> of listings are in the two central areas.</span></div>
@@ -385,7 +385,7 @@ kbd { font: 700 .72rem/1 var(--font); padding: 3px 7px; border-radius: 6px; back
       <div class="shots">
         <div class="tabs" role="tablist" id="shot-tabs"><button role="tab" data-s="0">Story</button><button role="tab" data-s="1">Compare</button><button role="tab" data-s="2">Explore</button><button role="tab" data-s="3">Predict</button></div>
         <div class="shot first" data-s="0"><img src="assets/story.jpg" alt="Story view of the dashboard"><p>Story mode walks through the findings like slides.</p></div>
-        <div class="shot" data-s="1"><img src="assets/compare.jpg" alt="Compare view of the dashboard"><p>Compare any two neighbourhoods, with a trophy on the better value.</p></div>
+        <div class="shot" data-s="1"><img src="assets/compare.jpg" alt="Compare view of the dashboard"><p>Compare any two neighbourhoods, with the better value marked in coral.</p></div>
         <div class="shot" data-s="2"><img src="assets/explore.jpg" alt="Explore view of the dashboard"><p>Click a listing to see its details and whether its price is fair.</p></div>
         <div class="shot" data-s="3"><img src="assets/predict.jpg" alt="Predict view of the dashboard"><p>The Random Forest estimates a price: €73 average error, 17% better than guessing the median.</p></div>
       </div>
@@ -456,7 +456,7 @@ kbd { font: 700 .72rem/1 var(--font); padding: 3px 7px; border-radius: 6px; back
   const fmt = (n, d = 0) => n.toLocaleString("en-US", { minimumFractionDigits: d, maximumFractionDigits: d });
   const eur = (n) => "€" + fmt(n, Number.isInteger(n) ? 0 : 1);
   const C = { coral: "#FF5A5F", light: "#FFB3B5", ink: "#1D1D1F", green: "#34C759", grey: "#86868B", silver: "#D2D2D7" };
-  const HOST = [C.coral, C.light, C.ink], PRICE = [C.green, C.coral, C.ink];
+  const HOST = [C.ink, "#B0B0B0", C.coral], PRICE = ["#FFC2C4", C.coral, "#A3202B"];  // same colours as the dashboard
 
   // ---------- charts (drawn from the real numbers) ----------
   function hbars(el, items, format) {

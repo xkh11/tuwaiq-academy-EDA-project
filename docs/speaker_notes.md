@@ -53,7 +53,7 @@ Keys: **→** or **Space** = next, **←** = back, **F** = fullscreen. On slide 
 Click **Open the live demo**. If there's no internet, use the screenshots on this slide.
 
 1. **Story:** "The 5 findings, one at a time." Click next once.
-2. **Compare:** pick two neighbourhoods, for example Santo Stefano and Savena. "The trophy marks the better value."
+2. **Compare:** pick two neighbourhoods, for example Santo Stefano and Savena. "The better value for a guest is marked in coral."
 3. **Explore:** click one listing. "You see its details and whether the price is fair."
 4. **Predict:** change the room type. "A Random Forest estimates the price. It's off by about €73 on average, 17% better than just guessing the median."
 
