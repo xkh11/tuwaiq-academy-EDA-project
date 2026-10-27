@@ -87,4 +87,6 @@ Python, pandas, NumPy, Matplotlib, Seaborn, scikit-learn, Plotly, Streamlit.
 
 ---
 
+Photos in the presentation: Wikimedia Commons, CC BY-SA 4.0: "Portici di Bologna 2019" by Isabella.Mileti, "Bologna Portici di Via dei Mille" by FrancescoLama, "Bologna Torre degli Asinelli Vista Panoramica 05" by Zairon.
+
 Built by **Khalid Alotaibi**. Data from [Inside Airbnb](https://insideairbnb.com/). Independent student project, not affiliated with Airbnb.

@@ -43,6 +43,11 @@ Keys: **→** or **Space** = next, **←** = back, **F** = fullscreen. On slide 
 **Prices:**
 > A typical night costs €176. I use the median because a few very expensive listings pull the mean up to €206. A private room saves about €55 a night.
 
+*Interactive moment (10 s):* drag **Your budget a night** to €150.
+> With €150 a night, 1,666 listings fit, that's 37%, and only Savena and Borgo Panigale - Reno have a typical night under it.
+
+(Click the slider first; while it has focus, the arrow keys move it instead of changing slides.)
+
 **Where to stay:**
 > On the map, 69% of listings are in the two central areas. The centre costs €70 more than Savena.
 
